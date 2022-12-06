@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { nanoid } from 'nanoid';
 import { addContacts } from 'redux/contactsSlice';
 import { getContacts } from 'redux/selectors';
 import { Form, Label, Input, Button } from './Phonebook.styled';
@@ -14,8 +13,8 @@ export const Phonebook = () => {
   const handleSubmit = e => {
     e.preventDefault();
 
-    const names = contacts.map(item => item.name);
-    if (names.includes(name)) {
+    if (contacts.find(item => item.name === name)) {
+      reset();
       return alert(`${name} is already in contacts`);
     }
 
@@ -23,16 +22,14 @@ export const Phonebook = () => {
     reset();
   };
 
-  const nameInputID = nanoid();
-  const numberInputID = nanoid();
-
   const handleNameChange = e => {
-    switch (e.currentTarget.name) {
+    const { name, value } = e.currentTarget;
+    switch (name) {
       case 'name':
-        setName(e.currentTarget.value);
+        setName(value);
         break;
       case 'number':
-        setNumber(e.currentTarget.value);
+        setNumber(value);
         break;
       default:
         console.log('There is no such value');
@@ -47,27 +44,25 @@ export const Phonebook = () => {
   return (
     <>
       <Form onSubmit={handleSubmit}>
-        <Label htmlFor={nameInputID}>
+        <Label>
           Name
           <Input
             type="text"
             name="name"
             value={name}
             onChange={handleNameChange}
-            id={nameInputID}
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
           />
         </Label>
-        <Label htmlFor={numberInputID}>
+        <Label>
           Number
           <Input
             type="tel"
             name="number"
             value={number}
             onChange={handleNameChange}
-            id={numberInputID}
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
